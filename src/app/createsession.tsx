@@ -1,35 +1,34 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { useSession } from "@/context/SessionContext";
+import { router } from "expo-router";
 
 export default function SessionForm() {
+  const { setActiveSession } = useSession();
+
   const [subject, setSubject] = useState("");
   const [taskName, setTaskName] = useState("");
   const [duration, setDuration] = useState("25");
   const [cycles, setCycles] = useState("4");
 
-  const handleSave = () => {
-    const session = {
-      subject,
-      taskName,
-      duration,
-      cycles,
-    };
+  const handleStart = () => {
+    if (!subject || !taskName) return;
 
-    console.log("SESSION CREATED:", session);
-    alert("Session Saved (Static Mode)");
+    setActiveSession({ subject, taskName, duration, cycles });
+    router.push("/pomodoro");
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Create Study Session</Text>
+      <Text style={styles.title}>Create Session</Text>
 
-      <TextInput placeholder="Subject" placeholderTextColor="#aaa" style={styles.input} onChangeText={setSubject} />
-      <TextInput placeholder="Task Name" placeholderTextColor="#aaa" style={styles.input} onChangeText={setTaskName} />
-      <TextInput placeholder="Duration (mins)" placeholderTextColor="#aaa" style={styles.input} onChangeText={setDuration} keyboardType="numeric" />
-      <TextInput placeholder="Cycles" placeholderTextColor="#aaa" style={styles.input} onChangeText={setCycles} keyboardType="numeric" />
+      <TextInput style={styles.input} placeholder="Subject" placeholderTextColor="#aaa" onChangeText={setSubject} />
+      <TextInput style={styles.input} placeholder="Task Name" placeholderTextColor="#aaa" onChangeText={setTaskName} />
+      <TextInput style={styles.input} placeholder="Duration (mins)" placeholderTextColor="#aaa" onChangeText={setDuration} keyboardType="numeric" />
+      <TextInput style={styles.input} placeholder="Cycles" placeholderTextColor="#aaa" onChangeText={setCycles} keyboardType="numeric" />
 
-      <TouchableOpacity style={styles.button} onPress={handleSave}>
-        <Text style={{ color: "#fff", fontWeight: "700" }}>Save Session</Text>
+      <TouchableOpacity style={styles.button} onPress={handleStart}>
+        <Text style={styles.buttonText}>Start Session</Text>
       </TouchableOpacity>
     </View>
   );
@@ -42,7 +41,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#1c1c2e",
     padding: 12,
     borderRadius: 10,
-    marginBottom: 10,
+    marginBottom: 12,
     color: "#fff",
   },
   button: {
@@ -50,6 +49,6 @@ const styles = StyleSheet.create({
     padding: 14,
     borderRadius: 10,
     alignItems: "center",
-    marginTop: 10,
   },
+  buttonText: { color: "#fff", fontWeight: "700" },
 });

@@ -1,51 +1,18 @@
 import React, { useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
+import { useSession } from "../context/SessionContext";
 
 export default function Dashboard() {
+  const { sessions } = useSession();
+
   const [showTips, setShowTips] = useState(true);
   const [timeFilter, setTimeFilter] = useState("All time");
 
-  /* ---------------- STATIC MOCK DATA ---------------- */
-  const sessions = [
-    {
-      date: "2026-03-25",
-      startTime: "10:00 AM",
-      subject: "Math",
-      taskName: "Algebra",
-      duration: "60",
-      mood: "Focused",
-      sleep: "7",
-      result: "Productive",
-      period: "Morning Hours",
-    },
-    {
-      date: "2026-03-26",
-      startTime: "02:00 PM",
-      subject: "Science",
-      taskName: "Biology",
-      duration: "45",
-      mood: "Tired",
-      sleep: "6",
-      result: "Not Productive",
-      period: "Afternoon",
-    },
-    {
-      date: "2026-03-27",
-      startTime: "09:00 AM",
-      subject: "English",
-      taskName: "Essay",
-      duration: "30",
-      mood: "Focused",
-      sleep: "8",
-      result: "Productive",
-      period: "Morning Hours",
-    },
-  ];
-
-  /* ---------------- FILTER LOGIC ---------------- */
   const filteredSessions = sessions.filter((s) => {
     const sessionDate = new Date(s.date);
     const today = new Date();
+
+    if (!s.date) return false;
 
     if (timeFilter === "Today") {
       return sessionDate.toDateString() === today.toDateString();
@@ -68,7 +35,6 @@ export default function Dashboard() {
     return true;
   });
 
-  /* ---------------- CALCULATIONS ---------------- */
   const total = filteredSessions.length;
 
   const productiveCount = filteredSessions.filter(
@@ -77,15 +43,15 @@ export default function Dashboard() {
 
   const confidence = total ? Math.round((productiveCount / total) * 100) : 0;
 
-  let totalMins = 0;
-  filteredSessions.forEach((s) => (totalMins += parseInt(s.duration)));
+  const totalMins = filteredSessions.reduce(
+    (sum, s) => sum + (parseInt(s.duration || "0") || 0),
+    0
+  );
 
   const avg = total ? Math.round(totalMins / total) : 0;
 
-  /* ---------------- UI ---------------- */
   return (
     <ScrollView style={styles.container}>
-      {/* HEADER */}
       <View style={styles.header}>
         <Text style={styles.title}>Dashboard</Text>
 
@@ -96,7 +62,6 @@ export default function Dashboard() {
         </TouchableOpacity>
       </View>
 
-      {/* CARDS */}
       <View style={styles.cardRow}>
         <Card title="Total Sessions" value={total} />
         <Card title="Productive" value={productiveCount} />
@@ -104,7 +69,6 @@ export default function Dashboard() {
         <Card title="Confidence" value={`${confidence}%`} />
       </View>
 
-      {/* SIMPLE "CHART PLACEHOLDERS" */}
       <View style={styles.panel}>
         <Text style={styles.panelTitle}>Productivity Overview</Text>
 
@@ -125,7 +89,6 @@ export default function Dashboard() {
         ))}
       </View>
 
-      {/* TABLE */}
       <View style={styles.panel}>
         <Text style={styles.panelTitle}>Recent Sessions</Text>
 
@@ -139,7 +102,6 @@ export default function Dashboard() {
         ))}
       </View>
 
-      {/* RIGHT PANEL */}
       <View style={styles.panel}>
         <Text style={styles.panelTitle}>Prediction</Text>
         <Text>
@@ -148,7 +110,6 @@ export default function Dashboard() {
         <Text>Confidence: {confidence}%</Text>
       </View>
 
-      {/* TIPS */}
       {showTips && (
         <View style={styles.panel}>
           <Text style={styles.panelTitle}>Tips</Text>
@@ -160,7 +121,6 @@ export default function Dashboard() {
   );
 }
 
-/* ---------------- CARD COMPONENT ---------------- */
 function Card({ title, value }: any) {
   return (
     <View style={styles.card}>
@@ -170,7 +130,6 @@ function Card({ title, value }: any) {
   );
 }
 
-/* ---------------- STYLES ---------------- */
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, backgroundColor: "#0f0f1a" },
 
@@ -229,6 +188,7 @@ const styles = StyleSheet.create({
   },
 
   cell: { color: "#ddd", fontSize: 12 },
+
   badge: {
     color: "#fff",
     backgroundColor: "#333",
