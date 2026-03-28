@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 /* ✅ 1. ACTIVE SESSION (FORM → TIMER) */
 type ActiveSession = {
@@ -28,11 +29,31 @@ type SessionContextType = {
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
 
 export function SessionProvider({ children }: any) {
-  const [activeSession, setActiveSession] = useState<ActiveSession | null>(null);
+  const [activeSession, setActiveSession] = useState<ActiveSession | null>(
+    null,
+  );
   const [sessions, setSessions] = useState<Session[]>([]);
 
+  useEffect(() => {
+    const loadSessions = async () => {
+      try {
+        const stored = await AsyncStorage.getItem("sessions");
+        if (stored) setSessions(JSON.parse(stored));
+      } catch (error) {
+        console.error("Failed to load sessions:", error);
+      }
+    };
+    loadSessions();
+  }, []);
+
   const addSession = (session: Session) => {
-    setSessions((prev) => [...prev, session]);
+    setSessions((prev) => {
+      const newSessions = [...prev, session];
+      AsyncStorage.setItem("sessions", JSON.stringify(newSessions)).catch(
+        (error) => console.error("Failed to save sessions:", error),
+      );
+      return newSessions;
+    });
   };
 
   return (
