@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 
+
 // --- Configuration & Constants ---
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const TIMER_SIZE = SCREEN_WIDTH * 0.6; // Reduced size for better fit
