@@ -1,7 +1,7 @@
+import { usePathname } from "expo-router";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import React from "react";
 import { useColorScheme } from "react-native";
-
 
 import { Colors } from "@/constants/theme";
 import { useThemeMode } from "@/context/ThemeContext";
@@ -11,7 +11,12 @@ export default function AppTabs() {
   const colors = Colors[scheme === "unspecified" ? "light" : scheme];
   const { nightMode, setNightMode, theme } = useThemeMode();
   const { bg, cardBg, textColor, subColor, borderColor, inputBg } = theme;
-  const iconTintColor = scheme === "light" ? "#4B0082" : undefined;
+  const pathname = usePathname();
+
+  const getIconTint = (name: string) => {
+    const isSelected = pathname === `/${name}`;
+    return isSelected ? "#34005a" : undefined;
+  };
 
   return (
     <NativeTabs
@@ -24,16 +29,18 @@ export default function AppTabs() {
         <NativeTabs.Trigger.Icon
           src={require("@/assets/images/tabIcons/home.png")}
           renderingMode="template"
-
+          // @ts-ignore
+          color={getIconTint("dashboard")}
         />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="createsession">
-        <NativeTabs.Trigger.Label>Create Session</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>New Session</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
           src={require("@/assets/images/tabIcons/explore.png")}
           renderingMode="template"
-     
+          // @ts-ignore
+          color={getIconTint("createsession")}
         />
       </NativeTabs.Trigger>
 
@@ -42,25 +49,28 @@ export default function AppTabs() {
         <NativeTabs.Trigger.Icon
           src={require("@/assets/images/tabIcons/history.png")}
           renderingMode="template"
-
+          // @ts-ignore
+          color={getIconTint("history")}
         />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="pomodoro">
-        <NativeTabs.Trigger.Label>Pomodoro Timer</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>Pomodoro</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          src={require("@/assets/images/tabIcons/clock.png")}
+          src={require("@/assets/images/tabIcons/hourglass.png")}
           renderingMode="template"
-
+          // @ts-ignore
+          color={getIconTint("pomodoro")}
         />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="profile">
         <NativeTabs.Trigger.Label>Profile</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          src={require("@/assets/images/tabIcons/clock.png")}
+          src={require("@/assets/images/tabIcons/user.png")}
           renderingMode="template"
-     
+          // @ts-ignore
+          color={getIconTint("profile")}
         />
       </NativeTabs.Trigger>
     </NativeTabs>
