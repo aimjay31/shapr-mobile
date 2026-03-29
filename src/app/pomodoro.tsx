@@ -15,9 +15,9 @@ const THEME_PURPLE = '#7C5CFC';
 
 // Default durations (in seconds)
 const DURATIONS = {
-  focus: 25 * 60,  // 25 Minutes
-  shortbreak: 5 * 60,   // 5 Minutes
-  longbreak: 15 * 60,   // 15 Minutes
+  focus: 25 * 60, 
+  short: 5 * 60,
+  long: 15 * 60,
 };
 
 // Mode Selector Options
